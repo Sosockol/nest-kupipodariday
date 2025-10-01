@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import type { CreateOfferDto } from './dto/create-offer.dto';
 import type { UpdateOfferDto } from './dto/update-offer.dto';
-import type { OffersService } from './offers.service';
+import { OffersService } from './offers.service';
 
 @Controller('offers')
 export class OffersController {

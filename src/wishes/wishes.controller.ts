@@ -7,10 +7,10 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import type { UsersService } from '../users/users.service';
+import { UsersService } from '../users/users.service';
 import type { CreateWishDto } from './dto/create-wish.dto';
 import type { UpdateWishDto } from './dto/update-wish.dto';
-import type { WishesService } from './wishes.service';
+import { WishesService } from './wishes.service';
 
 @Controller('wishes')
 export class WishesController {
