@@ -6,35 +6,40 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UsersService } from '../users/users.service';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { User } from '../users/entities/user.entity';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { WishesService } from './wishes.service';
 
 @ApiTags('wishes')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('wishes')
 export class WishesController {
-  constructor(
-    private readonly wishesService: WishesService,
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly wishesService: WishesService) {}
 
   @Post()
   @ApiOperation({ summary: 'Создать новое желание' })
   @ApiBody({ type: CreateWishDto })
   @ApiResponse({ status: 201, description: 'Желание успешно создано' })
-  async create(@Body() createWishDto: CreateWishDto) {
-    // TODO: Заменить на реального пользователя из JWT токена
-    const mockUser = await this.usersService.findOne({ where: { id: 1 } });
-    return this.wishesService.create(createWishDto, mockUser);
+  @ApiResponse({ status: 401, description: 'Не авторизован' })
+  async create(
+    @Body() createWishDto: CreateWishDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.wishesService.create(createWishDto, user);
   }
 
   @Get()

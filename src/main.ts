@@ -19,6 +19,8 @@ async function bootstrap() {
     .setTitle('KupiPodariDay API')
     .setDescription('API для сервиса коллективных подарков')
     .setVersion('1.0')
+    .addBearerAuth()
+    .addTag('auth', 'Авторизация и регистрация')
     .addTag('users', 'Операции с пользователями')
     .addTag('wishes', 'Операции с желаниями')
     .addTag('wishlists', 'Операции со списками желаний')

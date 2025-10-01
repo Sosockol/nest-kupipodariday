@@ -6,36 +6,41 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UsersService } from '../users/users.service';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { User } from '../users/entities/user.entity';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { WishlistsService } from './wishlists.service';
 
 @ApiTags('wishlists')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('wishlists')
 export class WishlistsController {
-  constructor(
-    private readonly wishlistsService: WishlistsService,
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly wishlistsService: WishlistsService) {}
 
   @Post()
   @ApiOperation({ summary: 'Создать новый список желаний' })
   @ApiBody({ type: CreateWishlistDto })
   @ApiResponse({ status: 201, description: 'Список желаний успешно создан' })
   @ApiResponse({ status: 400, description: 'Некорректные данные' })
-  async create(@Body() createWishlistDto: CreateWishlistDto) {
-    // TODO: Заменить на реального пользователя из JWT токена
-    const mockUser = await this.usersService.findOne({ where: { id: 1 } });
-    return this.wishlistsService.create(createWishlistDto, mockUser);
+  @ApiResponse({ status: 401, description: 'Не авторизован' })
+  async create(
+    @Body() createWishlistDto: CreateWishlistDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.wishlistsService.create(createWishlistDto, user);
   }
 
   @Get()

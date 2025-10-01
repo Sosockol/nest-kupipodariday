@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
+import { HashModule } from './hash/hash.module';
+import { HashService } from './hash/hash.service';
 import { OffersModule } from './offers/offers.module';
 import { UsersModule } from './users/users.module';
 import { WishesModule } from './wishes/wishes.module';
@@ -37,6 +40,9 @@ const getEnvFilePath = () => {
     WishesModule,
     WishlistsModule,
     OffersModule,
+    AuthModule,
+    HashModule,
   ],
+  providers: [HashService],
 })
 export class AppModule {}
