@@ -1,5 +1,4 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { UsersService } from '../users/users.service';
 import type { CreateWishlistDto } from './dto/create-wishlist.dto';
 import type { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import type { Wishlist } from './entities/wishlist.entity';
@@ -9,7 +8,6 @@ import { WishlistsService } from './wishlists.service';
 describe('WishlistsController', () => {
   let controller: WishlistsController;
   let wishlistsService: WishlistsService;
-  let usersService: UsersService;
 
   const mockUser = {
     id: 1,
@@ -44,10 +42,6 @@ describe('WishlistsController', () => {
     removeOne: jest.fn(),
   };
 
-  const mockUsersService = {
-    findOne: jest.fn(),
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [WishlistsController],
@@ -56,16 +50,11 @@ describe('WishlistsController', () => {
           provide: WishlistsService,
           useValue: mockWishlistsService,
         },
-        {
-          provide: UsersService,
-          useValue: mockUsersService,
-        },
       ],
     }).compile();
 
     controller = module.get<WishlistsController>(WishlistsController);
     wishlistsService = module.get<WishlistsService>(WishlistsService);
-    usersService = module.get<UsersService>(UsersService);
   });
 
   afterEach(() => {
@@ -80,12 +69,10 @@ describe('WishlistsController', () => {
         image: 'https://example.com/image.jpg',
       };
 
-      mockUsersService.findOne.mockResolvedValue(mockUser);
       mockWishlistsService.create.mockResolvedValue(mockWishlist);
 
-      const result = await controller.create(createWishlistDto);
+      const result = await controller.create(createWishlistDto, mockUser);
 
-      expect(usersService.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
       expect(wishlistsService.create).toHaveBeenCalledWith(
         createWishlistDto,
         mockUser,
