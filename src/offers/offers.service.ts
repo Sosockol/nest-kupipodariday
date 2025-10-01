@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import type { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import type { CreateOfferDto } from './dto/create-offer.dto';
 import type { UpdateOfferDto } from './dto/update-offer.dto';
+import { Offer } from './entities/offer.entity';
 
 @Injectable()
 export class OffersService {
-  create(createOfferDto: CreateOfferDto) {
-    return 'This action adds a new offer';
+  constructor(
+    @InjectRepository(Offer)
+    private readonly offerRepository: Repository<Offer>,
+  ) {}
+
+  async create(createOfferDto: CreateOfferDto): Promise<Offer> {
+    const offer = this.offerRepository.create(createOfferDto);
+    return await this.offerRepository.save(offer);
   }
 
-  findAll() {
-    return `This action returns all offers`;
+  async findMany(query: FindManyOptions<Offer> = {}): Promise<Offer[]> {
+    return await this.offerRepository.find(query);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} offer`;
+  async findOne(query: FindOneOptions<Offer>): Promise<Offer> {
+    const offer = await this.offerRepository.findOne(query);
+    if (!offer) {
+      throw new NotFoundException('Offer not found');
+    }
+    return offer;
   }
 
-  update(id: number, updateOfferDto: UpdateOfferDto) {
-    return `This action updates a #${id} offer`;
+  async updateOne(
+    query: FindOneOptions<Offer>,
+    updateOfferDto: UpdateOfferDto,
+  ): Promise<Offer> {
+    const offer = await this.findOne(query);
+    Object.assign(offer, updateOfferDto);
+    return await this.offerRepository.save(offer);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} offer`;
+  async removeOne(query: FindOneOptions<Offer>): Promise<Offer> {
+    const offer = await this.findOne(query);
+    return await this.offerRepository.remove(offer);
   }
 }

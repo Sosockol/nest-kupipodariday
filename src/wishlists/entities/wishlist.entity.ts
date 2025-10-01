@@ -1,14 +1,14 @@
+import { IsOptional, IsString, IsUrl, Length } from 'class-validator';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  ManyToMany,
+  Entity,
   JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { IsString, IsUrl, Length, IsOptional } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
 import { Wish } from '../../wishes/entities/wish.entity';
 
@@ -38,10 +38,16 @@ export class Wishlist {
   @IsUrl()
   image: string;
 
-  @ManyToOne(() => User, (user) => user.wishlists)
+  @ManyToOne(
+    () => User,
+    (user) => user.wishlists,
+  )
   owner: User;
 
-  @ManyToMany(() => Wish, (wish) => wish.wishlists)
+  @ManyToMany(
+    () => Wish,
+    (wish) => wish.wishlists,
+  )
   @JoinTable()
   items: Wish[];
 }

@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import type { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import type { CreateWishlistDto } from './dto/create-wishlist.dto';
 import type { UpdateWishlistDto } from './dto/update-wishlist.dto';
+import { Wishlist } from './entities/wishlist.entity';
 
 @Injectable()
 export class WishlistsService {
-  create(createWishlistDto: CreateWishlistDto) {
-    return 'This action adds a new wishlist';
+  constructor(
+    @InjectRepository(Wishlist)
+    private readonly wishlistRepository: Repository<Wishlist>,
+  ) {}
+
+  async create(createWishlistDto: CreateWishlistDto): Promise<Wishlist> {
+    const wishlist = this.wishlistRepository.create(createWishlistDto);
+    return await this.wishlistRepository.save(wishlist);
   }
 
-  findAll() {
-    return `This action returns all wishlists`;
+  async findMany(query: FindManyOptions<Wishlist> = {}): Promise<Wishlist[]> {
+    return await this.wishlistRepository.find(query);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} wishlist`;
+  async findOne(query: FindOneOptions<Wishlist>): Promise<Wishlist> {
+    const wishlist = await this.wishlistRepository.findOne(query);
+    if (!wishlist) {
+      throw new NotFoundException('Wishlist not found');
+    }
+    return wishlist;
   }
 
-  update(id: number, updateWishlistDto: UpdateWishlistDto) {
-    return `This action updates a #${id} wishlist`;
+  async updateOne(
+    query: FindOneOptions<Wishlist>,
+    updateWishlistDto: UpdateWishlistDto,
+  ): Promise<Wishlist> {
+    const wishlist = await this.findOne(query);
+    Object.assign(wishlist, updateWishlistDto);
+    return await this.wishlistRepository.save(wishlist);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} wishlist`;
+  async removeOne(query: FindOneOptions<Wishlist>): Promise<Wishlist> {
+    const wishlist = await this.findOne(query);
+    return await this.wishlistRepository.remove(wishlist);
   }
 }

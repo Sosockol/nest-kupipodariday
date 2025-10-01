@@ -1,7 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import type { WishlistsService } from './wishlists.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import type { CreateWishlistDto } from './dto/create-wishlist.dto';
 import type { UpdateWishlistDto } from './dto/update-wishlist.dto';
+import type { WishlistsService } from './wishlists.service';
 
 @Controller('wishlists')
 export class WishlistsController {
@@ -14,21 +22,27 @@ export class WishlistsController {
 
   @Get()
   findAll() {
-    return this.wishlistsService.findAll();
+    return this.wishlistsService.findMany();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.wishlistsService.findOne(+id);
+    return this.wishlistsService.findOne({ where: { id: +id } });
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWishlistDto: UpdateWishlistDto) {
-    return this.wishlistsService.update(+id, updateWishlistDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateWishlistDto: UpdateWishlistDto,
+  ) {
+    return this.wishlistsService.updateOne(
+      { where: { id: +id } },
+      updateWishlistDto,
+    );
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.wishlistsService.remove(+id);
+    return this.wishlistsService.removeOne({ where: { id: +id } });
   }
 }

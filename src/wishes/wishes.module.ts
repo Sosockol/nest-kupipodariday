@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { WishesService } from './wishes.service';
-import { WishesController } from './wishes.controller';
 import { Wish } from './entities/wish.entity';
+import { WishesController } from './wishes.controller';
+import { WishesService } from './wishes.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Wish])],

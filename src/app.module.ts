@@ -3,19 +3,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { OffersModule } from './offers/offers.module';
 import { UsersModule } from './users/users.module';
 import { WishesModule } from './wishes/wishes.module';
 import { WishlistsModule } from './wishlists/wishlists.module';
-import { OffersModule } from './offers/offers.module';
 
 const getEnvFilePath = () => {
   const env = process.env.NODE_ENV || 'development';
-  const envFiles = [
-    `.env.${env}.local`,
-    `.env.local`,
-    `.env.${env}`,
-    '.env',
-  ];
+  const envFiles = [`.env.${env}.local`, `.env.local`, `.env.${env}`, '.env'];
   return envFiles;
 };
 

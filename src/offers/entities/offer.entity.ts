@@ -1,12 +1,12 @@
+import { IsBoolean, IsNumber, Min } from 'class-validator';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
+  Entity,
   ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { IsNumber, IsBoolean, Min } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
 import { Wish } from '../../wishes/entities/wish.entity';
 
@@ -30,9 +30,15 @@ export class Offer {
   @IsBoolean()
   hidden: boolean;
 
-  @ManyToOne(() => User, (user) => user.offers)
+  @ManyToOne(
+    () => User,
+    (user) => user.offers,
+  )
   user: User;
 
-  @ManyToOne(() => Wish, (wish) => wish.offers)
+  @ManyToOne(
+    () => Wish,
+    (wish) => wish.offers,
+  )
   item: Wish;
 }

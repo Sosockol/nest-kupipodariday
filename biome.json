@@ -23,11 +23,17 @@
         "useTemplate": "error"
       },
       "suspicious": {
-        "noExplicitAny": "warn"
+        "noExplicitAny": "error"
+      },
+      "correctness": {
+        "noUnusedFunctionParameters": "warn"
       }
     }
   },
   "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    },
     "formatter": {
       "quoteStyle": "single",
       "trailingCommas": "all"
