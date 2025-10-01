@@ -20,6 +20,11 @@
       "recommended": true,
       "style": {
         "useConst": "error",
+        "useImportType": {
+          "options": {
+            "style": "separatedType"
+          }
+        },
         "useTemplate": "error"
       },
       "suspicious": {
