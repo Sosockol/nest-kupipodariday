@@ -18,11 +18,17 @@ export class UsersService {
   }
 
   async findMany(query: FindManyOptions<User> = {}): Promise<User[]> {
-    return await this.userRepository.find(query);
+    return await this.userRepository.find({
+      relations: ['wishes', 'offers', 'wishlists'],
+      ...query,
+    });
   }
 
   async findOne(query: FindOneOptions<User>): Promise<User> {
-    const user = await this.userRepository.findOne(query);
+    const user = await this.userRepository.findOne({
+      relations: ['wishes', 'offers', 'wishlists'],
+      ...query,
+    });
     if (!user) {
       throw new NotFoundException('User not found');
     }

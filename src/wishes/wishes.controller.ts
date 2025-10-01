@@ -7,17 +7,23 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import type { UsersService } from '../users/users.service';
 import type { CreateWishDto } from './dto/create-wish.dto';
 import type { UpdateWishDto } from './dto/update-wish.dto';
 import type { WishesService } from './wishes.service';
 
 @Controller('wishes')
 export class WishesController {
-  constructor(private readonly wishesService: WishesService) {}
+  constructor(
+    private readonly wishesService: WishesService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post()
-  create(@Body() createWishDto: CreateWishDto) {
-    return this.wishesService.create(createWishDto);
+  async create(@Body() createWishDto: CreateWishDto) {
+    // TODO: Заменить на реального пользователя из JWT токена
+    const mockUser = await this.usersService.findOne({ where: { id: 1 } });
+    return this.wishesService.create(createWishDto, mockUser);
   }
 
   @Get()

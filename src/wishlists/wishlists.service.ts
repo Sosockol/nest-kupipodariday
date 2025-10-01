@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import type { User } from '../users/entities/user.entity';
 import type { CreateWishlistDto } from './dto/create-wishlist.dto';
 import type { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { Wishlist } from './entities/wishlist.entity';
@@ -12,17 +13,29 @@ export class WishlistsService {
     private readonly wishlistRepository: Repository<Wishlist>,
   ) {}
 
-  async create(createWishlistDto: CreateWishlistDto): Promise<Wishlist> {
-    const wishlist = this.wishlistRepository.create(createWishlistDto);
+  async create(
+    createWishlistDto: CreateWishlistDto,
+    owner: User,
+  ): Promise<Wishlist> {
+    const wishlist = this.wishlistRepository.create({
+      ...createWishlistDto,
+      owner,
+    });
     return await this.wishlistRepository.save(wishlist);
   }
 
   async findMany(query: FindManyOptions<Wishlist> = {}): Promise<Wishlist[]> {
-    return await this.wishlistRepository.find(query);
+    return await this.wishlistRepository.find({
+      relations: ['owner', 'items'],
+      ...query,
+    });
   }
 
   async findOne(query: FindOneOptions<Wishlist>): Promise<Wishlist> {
-    const wishlist = await this.wishlistRepository.findOne(query);
+    const wishlist = await this.wishlistRepository.findOne({
+      relations: ['owner', 'items'],
+      ...query,
+    });
     if (!wishlist) {
       throw new NotFoundException('Wishlist not found');
     }
